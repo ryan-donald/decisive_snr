@@ -1,8 +1,8 @@
 % Brendan Hertel, Ryan Donald
-%% if set to true, then the code will not attempt to automatically align the images. Must be set to false for systems hovering
+% if set to true, then the code will not attempt to automatically align the images. Must be set to false for systems hovering
 image_is_stationary = false;
 
-%% get image files
+% get image files
 
 img_ext_list = {'*.jpg;*.jpeg;*.png;*.bmp;*.tif'};
 [ref_filename, ref_path] = uigetfile(img_ext_list, 'Select the reference image');
@@ -16,7 +16,7 @@ if ~test_filename
    return;
 end
 
-%% read in images
+% read in images
 
 ref_img = imread([ref_path ref_filename]);
 test_img = imread([test_path test_filename]);
@@ -27,7 +27,7 @@ test_img = imresize(test_img, [img_size(1), img_size(2)]);
 ref_img_crop = imcrop(ref_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
 test_img_crop = imcrop(test_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
 
-%% center images
+% center images
 
 if(image_is_stationary == false)
     [ref_centers, ref_radii, ref_metric] = imfindcircles(ref_img_crop,[10 50]);
@@ -65,7 +65,7 @@ ref_img_gray = rgb2gray(ref_img);
 test_img_gray = rgb2gray(test_img);
 new_img_size = size(ref_img_gray);
 
-%% Measure SNR values
+% Measure SNR values
 %formulae from: http://bigwww.epfl.ch/sage/soft/snr/
 
 numer_SNR = sum(sum(ref_img_gray.^2));
@@ -82,13 +82,13 @@ RMSE = sqrt(sum(sum((ref_img_gray - test_img_gray).^2)) / (new_img_size(1) * new
 
 MAE = sum(sum(abs(ref_img_gray - test_img_gray))) / (new_img_size(1) * new_img_size(2));
 
-%% SSIM Method
+% SSIM Method
 % https://ece.uwaterloo.ca/~z70wang/research/ssim/
 
 SSIM = ssim(ref_img, test_img);
 
 
-%% display outputs
+% display outputs
 disp(['SNR: ' num2str(SNR)]);
 disp(['PSNR: ' num2str(PSNR)]);
 disp(['RMSE: ' num2str(RMSE)]);
