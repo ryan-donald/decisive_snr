@@ -1,7 +1,9 @@
+% Brendan Hertel, Ryan Donald
 %% if set to true, then the code will not attempt to automatically align the images. Must be set to false for systems hovering
-image_is_stationary = true;
+image_is_stationary = false;
 
 %% get image files
+
 img_ext_list = {'*.jpg;*.jpeg;*.png;*.bmp;*.tif'};
 [ref_filename, ref_path] = uigetfile(img_ext_list, 'Select the reference image');
 if ~ref_filename
@@ -15,41 +17,25 @@ if ~test_filename
 end
 
 %% read in images
+
 ref_img = imread([ref_path ref_filename]);
 test_img = imread([test_path test_filename]);
 
 img_size = size(ref_img);
 test_img = imresize(test_img, [img_size(1), img_size(2)]);
 
-ref_img_crop = imcrop(ref_img, [1250,1250,3000,2250]);
-test_img_crop = imcrop(test_img, [1250,1250,3000,2250]);
+ref_img_crop = imcrop(ref_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
+test_img_crop = imcrop(test_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
 
 %% center images
 
-%use dumb way right now, figure out smart way later
-
-% %get user input for centers
-% imshow(ref_img);
-% disp('Please select the center of the reference image');
-% ref_center = ginput(1);
-% close('all');
-% imshow(test_img);
-% disp('Please select the center of the test image');
-% test_center = ginput(1);
-% close('all');
-
-%%%
 if(image_is_stationary == false)
     [ref_centers, ref_radii, ref_metric] = imfindcircles(ref_img_crop,[10 50]);
     [test_centers, test_radii, test_metric] = imfindcircles(test_img_crop,[10 50]);
 
-    % y_diff = uint16(abs(ref_center(1) - test_center(1)));
-    % x_diff = uint16(abs(ref_center(2) - test_center(2)));
-
     ref_center = [ref_centers(1,1)+ 1000, ref_centers(1,2) + 1000];
     test_center = [test_centers(1,1) + 1000, test_centers(1,2) + 1000];
-    %ref_center = ref_centers(1, :);
-    %test_center = test_centers(1, :);
+
 
     x_diff = uint16(abs(ref_center(1) - test_center(1)));
     y_diff = uint16(abs(ref_center(2) - test_center(2)));
