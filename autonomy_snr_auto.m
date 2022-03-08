@@ -24,6 +24,10 @@ test_img = imread([test_path test_filename]);
 img_size = size(ref_img);
 test_img = imresize(test_img, [img_size(1), img_size(2)]);
 
+% crops images to be the center of the images, used in conjunction with the
+% centering method to properly center the images on the same point for more
+% accurate calculation
+
 ref_img_crop = imcrop(ref_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
 test_img_crop = imcrop(test_img, [0.25*img_size(1), 0.25*img_size(2), 0.75*img_size(1), 0.75*img_size(2)]);
 
